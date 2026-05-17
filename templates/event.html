@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>Lautapeliseura</title>
+</head>
+
+<body>
+  <p>
+  {% if session.user_id %}
+  <a href="/logout">Kirjaudu ulos</a>
+  {% else %}
+  <a href="/register">Rekisteröidy</a>
+  <p>Kirjaudu sisään</p>
+  <form action="/login" method="post">
+    <p>
+      Tunnus: <br />
+      <input type="text" name="username" />
+    </p>
+    <p>
+      Salasana: <br />
+      <input type="password" name="password" />
+    </p>
+    <input type="submit" value="Kirjaudu" />
+  </form>
+  {% endif %}
+  </p>
+
+  <hr />
+  <p>
+    <h2>{{ event.title }}</h2>
+    <strong>Päivämäärä</strong> {{ event.date }}
+    <p>Kuvaus: </p> {{ event.description }}
+    <p>
+        Pelajien määrä {{ event.num_players }}
+    </p>
+    {{ event.user_id }}
+  </p>
+
+  {% if session.user_id %}
+  <p>
+    <!-- Ilmoittaudu -->
+  </p>
+  {% else %}
+    <!-- Rekisteröidy käyttäjäksi ilmoittautuaksesi -->
+  {% endif %}
+
+  {% if event.user_id == session.user_id %}
+  <p>
+    <a href="/edit/{{ event.id }}">Muokkaa</a> |
+    <a href="/remove/{{ event.id }}">Poista</a>
+  </p>
+  {% endif %}
+
+  <p>
+    <a href="/">Etusivulle</a>
+  </p>
+</body>
+
+</html>

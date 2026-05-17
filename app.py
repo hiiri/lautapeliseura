@@ -14,7 +14,6 @@ app.secret_key = config.secret_key
 @app.route("/")
 def index():
     event_list = events.get_events()
-    print(event_list, "events list")
     return render_template("index.html", events=event_list)
 
 
@@ -35,9 +34,17 @@ def create():
         sql = "INSERT INTO users (username, password_hash) VALUES (?, ?)"
         db.execute(sql, [username, password_hash])
     except sqlite3.IntegrityError:
-        return "VIRHE: tunnus on jo varattu"
+        return """VIRHE: tunnus on jo varattu
+                <hr />
+                    <p>
+                        <a href="/">Etusivulle</a>
+                    </p>"""
 
-    return "Tunnus luotu"
+    return """Tunnus luotu
+            <hr />
+                <p>
+                    <a href="/">Etusivulle</a>
+                </p>"""
 
 @app.route("/login", methods=["POST"])
 def login():
@@ -48,7 +55,6 @@ def login():
     user_id = users.check_login(username, password)
     if user_id:
         session["user_id"] = user_id
-        print("logged in ************")
         return redirect("/")
     else:
         return "VIRHE: väärä tunnus tai salasana"
@@ -63,7 +69,25 @@ def new_event():
     title = request.form["title"]
     date = request.form["date"]
     num_players = request.form["num_players"]
+    description = request.form["description"]
     user_id = session["user_id"]
 
-    event_id = events.add_event(title, date, num_players, user_id)
+    event_id = events.add_event(title, date, num_players, description, user_id)
     return redirect("/event/" + str(event_id))
+
+@app.route("/event/<int:event_id>")
+def event_page(event_id):
+    event = events.get_event(event_id)
+    return render_template("event.html", event=event)
+
+@app.route("/edit/<int:event_id>", methods=["GET", "POST"])
+def edit_event(event_id):
+    event = events.get_event(event_id)
+
+    if request.method == "GET":
+        return render_template("edit.html", event=event)
+
+    if request.method == "POST":
+        description = request.form["description"]
+        event.update_event(event["id"], description)
+        return redirect("/event/" + str(event["event_id"]))

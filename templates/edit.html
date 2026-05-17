@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Muokkaa tapahtumaa</title>
+  </head>
+
+  <body>
+    <h2>Muokkaa tapahtumaa</h2>
+
+    <form action="/edit/{{ event.id }}" method="post">
+      <p>
+        Otsikko:<br />
+        <input type="text" name="title" value="{{ event.title }}"/>
+      </p>
+      <p>
+        Päivämäärä:<br />
+        <input type="date" id="date" name="date" />
+      </p>
+      <p>
+        Pelaajien määrä:<br />
+        <input type="text" name="num_players" />
+      </p>
+      <p>
+        Kuvaus:<br />
+        <textarea name="description" rows="5" cols="40"></textarea>
+      </p>
+      <input type="submit" value="Lähetä" />
+    </form>
+  </body>
+  
+</html>

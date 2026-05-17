@@ -27,12 +27,17 @@
   </p>
 
   <hr />
-  {{ events.total }} tapahtumaa
+  <h1>
+    Tapahtumat
+  </h1>
   {% for event in events %}
-  <p>
+  <ul>
+    <p>
     <a href="/event/{{ event.id }}">{{ event.title }}</a>
+    {{ event.date }}
+    </p>
     <br />
-  </p>
+  </ul>
   <hr />
   {% endfor %}
 
@@ -55,6 +60,10 @@
     <p>
       Pelaajien määrä:<br />
       <input type="text" name="num_players" />
+    </p>
+    <p>
+      Kuvaus:<br />
+      <textarea name="description" rows="5" cols="40"></textarea>
     </p>
     <input type="submit" value="Lähetä" />
   </form>
