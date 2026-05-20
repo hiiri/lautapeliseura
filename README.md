@@ -1,4 +1,4 @@
-# tikawe-lautapeliseura
+# lautapeliseura
 
 - Sovelluksessa käyttäjät pystyvät etsimään lautapeliseuraa. Ilmoituksessa lukee aika, tapahtuman tiedot sekä tarvittavien pelaajien määrä.
 - Käyttäjä pystyy luomaan tunnuksen ja kirjautumaan sisään sovellukseen.
