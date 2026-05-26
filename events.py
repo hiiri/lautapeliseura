@@ -1,7 +1,7 @@
 import db
 
 def get_events():
-    sql = """SELECT e.id, e.title, e.date, COUNT(e.id) total, MAX(e.date) newest
+    sql = """SELECT e.id, e.title, e.date, COUNT(e.id) total
              FROM events e
              GROUP BY e.id
              ORDER BY e.id DESC"""
@@ -28,3 +28,10 @@ def update_event(event_id, title, date, num_players, description):
 def remove_event(event_id):
     sql = "DELETE FROM events WHERE id = ?"
     db.execute(sql, [event_id])
+
+def search_events(query):
+    sql = """SELECT e.id, e.title, e.date
+             FROM events e
+             WHERE e.title LIKE ? OR e.description LIKE ?
+             ORDER BY e.date DESC"""
+    return db.query(sql, ["%" + query + "%", "%" + query + "%"])

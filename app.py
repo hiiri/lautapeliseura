@@ -106,3 +106,9 @@ def remove_event(event_id):
         if "continue" in request.form:
             events.remove_event(event_id)
         return redirect("/")
+
+@app.route("/search")
+def search_events():
+    query = request.args.get("query")
+    results = events.search_events(query) if query else []
+    return render_template("search.html", query=query, results=results)

@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>Haku</title>
+</head>
+
+<body>
+  {% if query %}
+  <hr />
+  <h2>Tulokset</h2>
+
+  <ul>
+    {% for result in results %}
+    <li>
+      <a href="/event/{{ result.id }}">
+        {{ result.title }}
+      </a>
+      <br />
+      {{ result.date }}
+    </li>
+    {% endfor %}
+  </ul>
+  {% else %}
+  <p>
+    Ei tapahtumia löytynyt.
+  </p>
+  {% endif %}
+  <p>
+    <a href="/">Etusivulle</a>
+  </p>
+</body>
+
+</html>
