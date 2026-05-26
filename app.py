@@ -88,6 +88,21 @@ def edit_event(event_id):
         return render_template("edit.html", event=event)
 
     if request.method == "POST":
+        title = request.form["title"]
+        date = request.form["date"]
+        num_players = request.form["num_players"]
         description = request.form["description"]
-        event.update_event(event["id"], description)
-        return redirect("/event/" + str(event["event_id"]))
+        events.update_event(event["id"], title, date, num_players, description)
+        return redirect("/event/" + str(event_id))
+
+@app.route("/remove/<int:event_id>", methods=["GET", "POST"])
+def remove_event(event_id):
+    event = events.get_event(event_id)
+
+    if request.method == "GET":
+        return render_template("remove.html", event=event)
+
+    if request.method == "POST":
+        if "continue" in request.form:
+            events.remove_event(event_id)
+        return redirect("/")
