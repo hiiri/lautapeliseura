@@ -17,7 +17,8 @@ def get_event(event_id):
     sql = """SELECT e.id, e.title, e.description, e.date, e.num_players, e.user_id 
              FROM events e
              WHERE e.id = ?"""
-    return db.query(sql, [event_id])[0]
+    result = db.query(sql, [event_id])
+    return result[0] if result else None
 
 def update_event(event_id, title, date, num_players, description):
     sql = """UPDATE events 
@@ -35,3 +36,7 @@ def search_events(query):
              WHERE e.title LIKE ? OR e.description LIKE ?
              ORDER BY e.date DESC"""
     return db.query(sql, ["%" + query + "%", "%" + query + "%"])
+
+def join_event(user_id, event_id):
+    sql = "INSERT INTO registrations (user_id, event_id) VALUES (?, ?)"
+    db.execute(sql, [user_id, event_id])

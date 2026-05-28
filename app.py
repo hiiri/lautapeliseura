@@ -1,6 +1,6 @@
 import sqlite3
 from flask import Flask
-from flask import redirect, render_template, request, session
+from flask import redirect, render_template, request, session, abort
 from werkzeug.security import generate_password_hash, check_password_hash
 import db
 import config
@@ -78,6 +78,8 @@ def new_event():
 @app.route("/event/<int:event_id>")
 def event_page(event_id):
     event = events.get_event(event_id)
+    if not event:
+        abort(404)
     return render_template("event.html", event=event)
 
 @app.route("/edit/<int:event_id>", methods=["GET", "POST"])
@@ -112,3 +114,11 @@ def search_events():
     query = request.args.get("query")
     results = events.search_events(query) if query else []
     return render_template("search.html", query=query, results=results)
+
+@app.route("/join/<int:event_id>", methods=["POST"])
+def join_event(event_id):
+    user_id = request.form["user_id"]
+    if not user_id:
+        abort(400)
+    events.join_event(user_id, event_id)
+    return redirect("/event/" + str(event_id))

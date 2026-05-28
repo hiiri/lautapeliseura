@@ -37,6 +37,17 @@
     {{ event.user_id }}
   </p>
 
+  {% if session.user_id%}
+  <p>
+    <form action="/join/{{ event.id }}" method="post">
+      <input type="hidden" name="user_id" value="{{ session.user_id }}" />
+      <input type="hidden" name="event_id" value="{{ event.id }}" />
+      <input type="submit" value="Ilmoittaudu tapahtumaan" />
+
+    </form>
+  </p>
+  {% endif %}
+
   {% if event.user_id == session.user_id %}
   <p>
     <a href="/edit/{{ event.id }}">Muokkaa</a> |
