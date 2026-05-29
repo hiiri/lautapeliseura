@@ -34,7 +34,12 @@
     <p>
         Pelajien määrä {{ event.num_players }}
     </p>
-    {{ event.user_id }}
+    <p>Ilmoittautuneet:</p>
+    <ul>
+      {% for registration in registrations %}
+      <li>{{ registration.username }}</li>
+      {% endfor %}
+    </ul>
   </p>
 
   {% if session.user_id%}

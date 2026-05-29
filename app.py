@@ -80,7 +80,8 @@ def event_page(event_id):
     event = events.get_event(event_id)
     if not event:
         abort(404)
-    return render_template("event.html", event=event)
+    registrations = events.get_registrations(event_id)
+    return render_template("event.html", event=event, registrations=registrations)
 
 @app.route("/edit/<int:event_id>", methods=["GET", "POST"])
 def edit_event(event_id):
@@ -120,5 +121,6 @@ def join_event(event_id):
     user_id = request.form["user_id"]
     if not user_id:
         abort(400)
-    events.join_event(user_id, event_id)
+    if events.join_event(user_id, event_id) == False:
+        return "Olet jo ilmoittautunut "
     return redirect("/event/" + str(event_id))

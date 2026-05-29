@@ -14,7 +14,7 @@ def add_event(title, date, num_players, description, user_id):
     return event_id
 
 def get_event(event_id):
-    sql = """SELECT e.id, e.title, e.description, e.date, e.num_players, e.user_id 
+    sql = """SELECT e.id, e.title, e.description, e.date, e.num_players, e.user_id
              FROM events e
              WHERE e.id = ?"""
     result = db.query(sql, [event_id])
@@ -27,6 +27,8 @@ def update_event(event_id, title, date, num_players, description):
     db.execute(sql, [title, date, num_players, description, event_id])
 
 def remove_event(event_id):
+    sql = "DELETE FROM registrations WHERE event_id = ?"
+    db.execute(sql, [event_id])
     sql = "DELETE FROM events WHERE id = ?"
     db.execute(sql, [event_id])
 
@@ -38,5 +40,20 @@ def search_events(query):
     return db.query(sql, ["%" + query + "%", "%" + query + "%"])
 
 def join_event(user_id, event_id):
-    sql = "INSERT INTO registrations (user_id, event_id) VALUES (?, ?)"
+    sql = """SELECT COUNT(*) FROM registrations WHERE user_id = ? AND event_id = ?"""
+    result = db.query(sql, [user_id, event_id])
+    if result[0][0] > 0:
+        return False
+    sql = """INSERT INTO registrations (user_id, event_id) VALUES (?, ?)"""
     db.execute(sql, [user_id, event_id])
+    return True
+
+def get_registrations(event_id):
+    sql = """
+        SELECT u.username
+        FROM registrations r
+        JOIN users u ON r.user_id = u.id
+        WHERE r.event_id = ?
+        ORDER BY u.username
+    """
+    return db.query(sql, [event_id])
