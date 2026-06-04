@@ -8,7 +8,8 @@ def get_events():
     return db.query(sql)
 
 def add_event(title, date, num_players, description, user_id):
-    sql = "INSERT INTO events (title, date, num_players, description, user_id) VALUES (?, ?, ?, ?, ?)"
+    sql = """INSERT INTO events (title, date, num_players, description, user_id)
+            VALUES (?, ?, ?, ?, ?)"""
     db.execute(sql, [title, date, num_players, description, user_id])
     event_id = db.last_insert_id()
     return event_id
@@ -21,7 +22,7 @@ def get_event(event_id):
     return result[0] if result else None
 
 def update_event(event_id, title, date, num_players, description):
-    sql = """UPDATE events 
+    sql = """UPDATE events
             SET title = ?, date = ?, num_players = ?, description = ? 
             WHERE id = ?"""
     db.execute(sql, [title, date, num_players, description, event_id])

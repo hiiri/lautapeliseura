@@ -1,7 +1,7 @@
 import sqlite3
 from flask import Flask
 from flask import redirect, render_template, request, session, abort
-from werkzeug.security import generate_password_hash, check_password_hash
+from werkzeug.security import generate_password_hash
 import db
 import config
 import events
@@ -48,7 +48,6 @@ def create():
 
 @app.route("/login", methods=["POST"])
 def login():
-
     username = request.form["username"]
     password = request.form["password"]
 
@@ -56,8 +55,7 @@ def login():
     if user_id:
         session["user_id"] = user_id
         return redirect("/")
-    else:
-        return "VIRHE: väärä tunnus tai salasana"
+    return "VIRHE: väärä tunnus tai salasana"
 
 @app.route("/logout")
 def logout():
@@ -121,6 +119,6 @@ def join_event(event_id):
     user_id = request.form["user_id"]
     if not user_id:
         abort(400)
-    if events.join_event(user_id, event_id) == False:
+    if events.join_event(user_id, event_id) is False:
         return "Olet jo ilmoittautunut "
     return redirect("/event/" + str(event_id))
