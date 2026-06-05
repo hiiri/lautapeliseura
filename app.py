@@ -1,6 +1,6 @@
 import sqlite3
 from flask import Flask
-from flask import redirect, render_template, request, session, abort
+from flask import redirect, render_template, request, session, abort, flash
 from werkzeug.security import generate_password_hash
 import db
 import config
@@ -16,35 +16,33 @@ def index():
     event_list = events.get_events()
     return render_template("index.html", events=event_list)
 
-
-@app.route("/register")
+@app.route("/register", methods=["GET", "POST"])
 def register():
-    return render_template("register.html")
+    if request.method == "GET":
+        return render_template("register.html", filled={})
+    
+    if request.method == "POST":
+        username = request.form["username"]
+        if not username or len(username) > 16:
+            flash("VIRHE: käyttäjänimen maksimipituus on 16 merkkiä")
+            filled = {"username": username}
+            return render_template("register.html", filled=filled)
+        password1 = request.form["password1"]
+        password2 = request.form["password2"]
 
-@app.route("/create", methods=["POST"])
-def create():
-    username = request.form["username"]
-    password1 = request.form["password1"]
-    password2 = request.form["password2"]
-    if password1 != password2:
-        return "VIRHE: salasanat eivät ole samat"
-    password_hash = generate_password_hash(password1)
+        if password1 != password2 or not password1 or not password2:
+            flash("VIRHE: salasanat eivät ole samat")
+            filled = {"username": username}
+            return render_template("register.html", filled=filled)
 
-    try:
-        sql = "INSERT INTO users (username, password_hash) VALUES (?, ?)"
-        db.execute(sql, [username, password_hash])
-    except sqlite3.IntegrityError:
-        return """VIRHE: tunnus on jo varattu
-                <hr />
-                    <p>
-                        <a href="/">Etusivulle</a>
-                    </p>"""
-
-    return """Tunnus luotu
-            <hr />
-                <p>
-                    <a href="/">Etusivulle</a>
-                </p>"""
+        try:
+            users.create_user(username, password1)
+            flash("Tunnuksen luominen onnistui")
+            return redirect("/")
+        except sqlite3.IntegrityError:
+            flash("VIRHE: käyttäjänimi on jo käytössä")
+            filled = {"username": username}
+            return render_template("register.html", filled=filled)
 
 @app.route("/login", methods=["POST"])
 def login():
@@ -55,7 +53,9 @@ def login():
     if user_id:
         session["user_id"] = user_id
         return redirect("/")
-    return "VIRHE: väärä tunnus tai salasana"
+    else:
+        flash("VIRHE: väärä tunnus tai salasana")
+        return redirect("/")
 
 @app.route("/logout")
 def logout():
@@ -122,3 +122,4 @@ def join_event(event_id):
     if events.join_event(user_id, event_id) is False:
         return "Olet jo ilmoittautunut "
     return redirect("/event/" + str(event_id))
+
