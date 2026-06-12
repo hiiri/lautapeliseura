@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Käyttäjäsivu</title>
+</head>
+<body>
+    <h1>Käyttäjä {{ user.username }}</h1>
+    {% if user.has_image %}
+    <img src="/image/{{ user.id }}" />
+    {% endif %}
+
+    <p>
+        Yhteensä {{ user_events | count }} tapahtumaa
+    </p>
+
+    <p>{{ username }}</p>
+    {% if user_events %}
+    <p>Käyttäjän tapahtumat:</p>
+    <ul> 
+        {% for event in user_events %}
+        <li>
+            <a href="/event/{{ event.id }}">{{ event.title }}</a> 
+            | {{ event.date }}
+            | {{ event.total }} ilmoittautunut
+            | <a href="/edit/{{ event.id }}">Muokkaa</a> 
+            | <a href="/remove/{{ event.id }}">Poista</a>
+        </li>
+        {% endfor %}
+    </ul>
+    {% else %}
+    <p>Ei tapahtumia</p>
+    {% endif %}
+
+    {% if session.user_id == user.id %}
+    <p>
+        <a href="/add_image">Lisää profiilikuva</a>
+    </p>
+    {% endif %}
+    <p>
+        <a href="/">Etusivulle</a>
+    </p>
+</body>
+</html>

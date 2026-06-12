@@ -51,10 +51,20 @@ def join_event(user_id, event_id):
 
 def get_registrations(event_id):
     sql = """
-        SELECT u.username
+        SELECT u.id, u.username
         FROM registrations r
         JOIN users u ON r.user_id = u.id
         WHERE r.event_id = ?
         ORDER BY u.username
     """
     return db.query(sql, [event_id])
+
+def get_user_events(user_id):
+    sql = """
+        SELECT e.id, e.title, e.date, COUNT(e.id) total
+        FROM events e
+        WHERE e.user_id = ?
+        GROUP BY e.id
+        ORDER BY e.date DESC
+    """
+    return db.query(sql, [user_id])

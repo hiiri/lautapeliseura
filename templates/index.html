@@ -17,7 +17,6 @@
   <a href="/logout">Kirjaudu ulos</a>
   {% else %}
   <a href="/register">Rekisteröidy</a>
-  <p>Kirjaudu sisään</p>
   <form action="/login" method="post">
     <p>
       Tunnus: <br />
@@ -31,8 +30,12 @@
   </form>
   {% endif %}
   </p>
-
   <hr />
+  {% if session.user_id %}
+  <p>
+    <a href="/user/{{ session.user_id }}">Käyttäjäsivu</a>
+  </p>
+  {% endif %}
   <h1>
     Tapahtumat
   </h1>

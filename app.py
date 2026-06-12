@@ -1,6 +1,6 @@
 import sqlite3
 from flask import Flask
-from flask import redirect, render_template, request, session, abort, flash
+from flask import redirect, render_template, request, session, abort, flash, make_response
 from werkzeug.security import generate_password_hash
 import db
 import config
@@ -64,6 +64,7 @@ def logout():
 
 @app.route("/new_event", methods=["POST"])
 def new_event():
+    require_login()
     title = request.form["title"]
     date = request.form["date"]
     num_players = request.form["num_players"]
@@ -123,3 +124,45 @@ def join_event(event_id):
         return "Olet jo ilmoittautunut "
     return redirect("/event/" + str(event_id))
 
+@app.route("/user/<int:user_id>")
+def show_user(user_id):
+    user = users.get_user(user_id)
+    if not user:
+        abort(404)
+    user_events = events.get_user_events(user_id)
+    return render_template("user.html", user=user, user_events=user_events)
+
+def require_login():
+    if not session.get("user_id"):
+        flash("Kirjaudu sisään")
+        return redirect("/")
+
+@app.route("/add_image", methods=["GET", "POST"])
+def add_image():
+    require_login()
+
+    if request.method == "GET":
+        return render_template("add_image.html")
+
+    if request.method == "POST":
+        file = request.files["image"]
+        if not file.filename.endswith(".jpg"):
+            return "VIRHE: väärä tiedostomuoto"
+
+        image = file.read()
+        if len(image) > 100 * 1024:
+            return "VIRHE: liian suuri kuva"
+
+        user_id = session["user_id"]
+        users.update_image(user_id, image)
+        return redirect("/user/" + str(user_id))
+
+@app.route("/image/<int:user_id>")
+def show_image(user_id):
+    image = users.get_image(user_id)
+    if not image:
+        abort(404)
+
+    response = make_response(bytes(image))
+    response.headers.set("Content-Type", "image/jpeg")
+    return response
