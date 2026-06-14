@@ -1,10 +1,7 @@
-import re
 import secrets
 import sqlite3
 from flask import Flask
 from flask import redirect, render_template, request, session, abort, flash, make_response
-from werkzeug.security import generate_password_hash
-import db
 import config
 import events
 import users
@@ -109,7 +106,10 @@ def event_page(event_id):
     if not event:
         abort(404)
     registrations = events.get_registrations(event_id)
-    return render_template("event.html", event=event, registrations=registrations)
+    is_registered = False
+    if "user_id" in session:
+        is_registered = any(reg["id"] == session["user_id"] for reg in registrations)
+    return render_template("event.html", event=event, registrations=registrations, is_registered=is_registered)
 
 @app.route("/edit/<int:event_id>", methods=["GET", "POST"])
 def edit_event(event_id):
@@ -186,6 +186,17 @@ def join_event(event_id):
     user_id = session["user_id"]
     if events.join_event(user_id, event_id) is False:
         return "Olet jo ilmoittautunut "
+    return redirect("/event/" + str(event_id))
+
+@app.route("/leave/<int:event_id>", methods=["POST"])
+def leave_event(event_id):
+    require_login()
+    check_csrf()
+    event = events.get_event(event_id)
+    if not event:
+        abort(404)
+    user_id = session["user_id"]
+    events.leave_event(user_id, event_id)
     return redirect("/event/" + str(event_id))
 
 @app.route("/user/<int:user_id>")

@@ -48,6 +48,10 @@ def join_event(user_id, event_id):
     db.execute(sql, [user_id, event_id])
     return True
 
+def leave_event(user_id, event_id):
+    sql = """DELETE FROM registrations WHERE user_id = ? AND event_id = ?"""
+    db.execute(sql, [user_id, event_id])
+
 def get_registrations(event_id):
     sql = """
         SELECT u.id, u.username

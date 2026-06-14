@@ -38,7 +38,7 @@
     {% endif %}
   </p>
   <p>
-    Pelajien määrä {{ event.num_players }}
+    Pelaajien määrä {{ event.num_players }}
   </p>
   <p>Ilmoittautuneet:</p>
   <ul>
@@ -48,15 +48,19 @@
   </ul>
   </p>
 
-  {% if session.user_id%}
+  {% if session.user_id %}
   <p>
-  <form action="/join/{{ event.id }}" method="post">
-    <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}" />
-    <input type="hidden" name="user_id" value="{{ session.user_id }}" />
-    <input type="hidden" name="event_id" value="{{ event.id }}" />
-    <input type="submit" value="Ilmoittaudu tapahtumaan" />
-
-  </form>
+    {% if is_registered %}
+    <form action="/leave/{{ event.id }}" method="post">
+      <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}" />
+      <input type="submit" value="Poistu tapahtumasta" />
+    </form>
+    {% else %}
+    <form action="/join/{{ event.id }}" method="post">
+      <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}" />
+      <input type="submit" value="Ilmoittaudu tapahtumaan" />
+    </form>
+    {% endif %}
   </p>
   {% endif %}
 
