@@ -1,31 +1,30 @@
 import db
 
 def get_events():
-    sql = """SELECT e.id, e.title, e.date, COUNT(e.id) total
+    sql = """SELECT e.id, e.title, e.date, e.genre, COUNT(e.id) total
              FROM events e
              GROUP BY e.id
              ORDER BY e.id DESC"""
     return db.query(sql)
 
-def add_event(title, date, num_players, description, user_id):
-    sql = """INSERT INTO events (title, date, num_players, description, user_id)
-            VALUES (?, ?, ?, ?, ?)"""
-    db.execute(sql, [title, date, num_players, description, user_id])
-    event_id = db.last_insert_id()
-    return event_id
+def add_event(title, date, num_players, description, user_id, genre):
+    sql = """INSERT INTO events (title, date, num_players, description, user_id, genre)
+             VALUES (?, ?, ?, ?, ?, ?)"""
+    db.execute(sql, [title, date, num_players, description, user_id, genre])
+    return db.last_insert_id()
 
 def get_event(event_id):
-    sql = """SELECT e.id, e.title, e.description, e.date, e.num_players, e.user_id
+    sql = """SELECT e.id, e.title, e.description, e.date, e.num_players, e.user_id, e.genre
              FROM events e
              WHERE e.id = ?"""
     result = db.query(sql, [event_id])
     return result[0] if result else None
 
-def update_event(event_id, title, date, num_players, description):
+def update_event(event_id, title, date, num_players, description, genre):
     sql = """UPDATE events
-            SET title = ?, date = ?, num_players = ?, description = ? 
-            WHERE id = ?"""
-    db.execute(sql, [title, date, num_players, description, event_id])
+             SET title = ?, date = ?, num_players = ?, description = ?, genre = ?
+             WHERE id = ?"""
+    db.execute(sql, [title, date, num_players, description, genre, event_id])
 
 def remove_event(event_id):
     sql = "DELETE FROM registrations WHERE event_id = ?"
@@ -34,11 +33,12 @@ def remove_event(event_id):
     db.execute(sql, [event_id])
 
 def search_events(query):
-    sql = """SELECT e.id, e.title, e.date
+    sql = """SELECT DISTINCT e.id, e.title, e.date
              FROM events e
-             WHERE e.title LIKE ? OR e.description LIKE ?
+             WHERE e.title LIKE ? OR e.description LIKE ? OR e.genre LIKE ?
              ORDER BY e.date DESC"""
-    return db.query(sql, ["%" + query + "%", "%" + query + "%"])
+    like = "%" + query + "%"
+    return db.query(sql, [like, like, like])
 
 def join_event(user_id, event_id):
     sql = """SELECT COUNT(*) FROM registrations WHERE user_id = ? AND event_id = ?"""
@@ -61,10 +61,15 @@ def get_registrations(event_id):
 
 def get_user_events(user_id):
     sql = """
-        SELECT e.id, e.title, e.date, COUNT(e.id) total
+        SELECT e.id, e.title, e.date, e.genre, COUNT(e.id) total
         FROM events e
         WHERE e.user_id = ?
         GROUP BY e.id
         ORDER BY e.date DESC
     """
     return db.query(sql, [user_id])
+
+def get_all_genres():
+    sql = "SELECT value FROM genres ORDER BY id"
+    result = db.query(sql)
+    return [row["value"] for row in result]

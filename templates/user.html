@@ -1,8 +1,10 @@
 <!DOCTYPE html>
 <html>
+
 <head>
     <title>Käyttäjäsivu</title>
 </head>
+
 <body>
     <h1>Käyttäjä {{ user.username }}</h1>
     {% if user.has_image %}
@@ -16,13 +18,13 @@
     <p>{{ username }}</p>
     {% if user_events %}
     <p>Käyttäjän tapahtumat:</p>
-    <ul> 
+    <ul>
         {% for event in user_events %}
         <li>
-            <a href="/event/{{ event.id }}">{{ event.title }}</a> 
+            <a href="/event/{{ event.id }}">{{ event.title }}</a>
             | {{ event.date }}
             | {{ event.total }} ilmoittautunut
-            | <a href="/edit/{{ event.id }}">Muokkaa</a> 
+            | <a href="/edit/{{ event.id }}">Muokkaa</a>
             | <a href="/remove/{{ event.id }}">Poista</a>
         </li>
         {% endfor %}
@@ -40,4 +42,5 @@
         <a href="/">Etusivulle</a>
     </p>
 </body>
+
 </html>

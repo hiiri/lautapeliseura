@@ -11,7 +11,8 @@ CREATE TABLE events (
     description TEXT,
     date TEXT,
     num_players INTEGER,
-    user_id INTEGER REFERENCES users
+    user_id INTEGER REFERENCES users,
+    genre TEXT
 );
 
 CREATE TABLE registrations (
@@ -21,3 +22,13 @@ CREATE TABLE registrations (
     user_id INTEGER REFERENCES users,
     event_id INTEGER REFERENCES events
 );
+
+CREATE TABLE genres (
+    id INTEGER PRIMARY KEY,
+    value TEXT
+);
+
+INSERT INTO genres (value) VALUES
+  ('Lautapeli'),
+  ('Korttipeli'),
+  ('Roolipeli');

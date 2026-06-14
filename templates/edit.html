@@ -25,6 +25,15 @@
       Kuvaus:<br />
       <textarea name="description" rows="5" cols="40" required>{{ event.description }}</textarea>
     </p>
+    <p>
+      Peligenre:
+      <br />
+      <select name="genre" id="genre" required>
+        {% for option in all_genres %}
+        <option value="{{ option }}">{{ option }}</option>
+        {% endfor %}
+      </select>
+    </p>
     <input type="submit" value="Lähetä" />
   </form>
   <p>

@@ -14,7 +14,9 @@ app.secret_key = config.secret_key
 @app.route("/")
 def index():
     event_list = events.get_events()
-    return render_template("index.html", events=event_list)
+    all_genres = events.get_all_genres()
+    return render_template("index.html", events=event_list, all_genres=all_genres)
+
 
 @app.route("/register", methods=["GET", "POST"])
 def register():
@@ -70,8 +72,9 @@ def new_event():
     num_players = request.form["num_players"]
     description = request.form["description"]
     user_id = session["user_id"]
+    genre = request.form.get("genre")
 
-    event_id = events.add_event(title, date, num_players, description, user_id)
+    event_id = events.add_event(title, date, num_players, description, user_id, genre)
     return redirect("/event/" + str(event_id))
 
 @app.route("/event/<int:event_id>")
@@ -85,16 +88,18 @@ def event_page(event_id):
 @app.route("/edit/<int:event_id>", methods=["GET", "POST"])
 def edit_event(event_id):
     event = events.get_event(event_id)
-
     if request.method == "GET":
-        return render_template("edit.html", event=event)
+        all_genres = events.get_all_genres()
+        return render_template("edit.html", event=event, all_genres=all_genres, genre=event["genre"])
 
     if request.method == "POST":
         title = request.form["title"]
         date = request.form["date"]
         num_players = request.form["num_players"]
         description = request.form["description"]
-        events.update_event(event["id"], title, date, num_players, description)
+        genre = request.form.get("genre")
+
+        events.update_event(event["id"], title, date, num_players, description, genre)
         return redirect("/event/" + str(event_id))
 
 @app.route("/remove/<int:event_id>", methods=["GET", "POST"])
@@ -112,7 +117,10 @@ def remove_event(event_id):
 @app.route("/search")
 def search_events():
     query = request.args.get("query")
-    results = events.search_events(query) if query else []
+    if query:
+        results = events.search_events(query)
+    else:
+        results = []
     return render_template("search.html", query=query, results=results)
 
 @app.route("/join/<int:event_id>", methods=["POST"])
@@ -135,7 +143,7 @@ def show_user(user_id):
 def require_login():
     if not session.get("user_id"):
         flash("Kirjaudu sisään")
-        return redirect("/")
+        abort(403)
 
 @app.route("/add_image", methods=["GET", "POST"])
 def add_image():

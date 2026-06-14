@@ -13,10 +13,10 @@
   {% endfor %}
   <p>
 
-  {% if session.user_id %}
-  <a href="/logout">Kirjaudu ulos</a>
-  {% else %}
-  <a href="/register">Rekisteröidy</a>
+    {% if session.user_id %}
+    <a href="/logout">Kirjaudu ulos</a>
+    {% else %}
+    <a href="/register">Rekisteröidy</a>
   <form action="/login" method="post">
     <p>
       Tunnus: <br />
@@ -55,8 +55,9 @@
   {% for event in events %}
   <ul>
     <p>
-    <a href="/event/{{ event.id }}">{{ event.title }}</a>
-    {{ event.date }}
+      <a href="/event/{{ event.id }}">{{ event.title }}</a>
+      {{ event.genre }}
+      {{ event.date }}
     </p>
     <br />
   </ul>
@@ -73,12 +74,7 @@
     </p>
     <p>
       Päivämäärä:<br />
-      <input
-        type="date"
-        id="date"
-        name="date"
-        required
-        />
+      <input type="date" id="date" name="date" required />
     </p>
     <p>
       Pelaajien määrä:<br />
@@ -87,6 +83,14 @@
     <p>
       Kuvaus:<br />
       <textarea name="description" rows="5" cols="40" required></textarea>
+    </p>
+    <p>
+      <label for="genre">Peligenre</label>: <br />
+      <select name="genre" id="genre" required>
+        {% for option in all_genres %}
+        <option value="{{ option }}">{{ option }}</option>
+        {% endfor %}
+      </select>
     </p>
     <input type="submit" value="Lähetä" />
   </form>

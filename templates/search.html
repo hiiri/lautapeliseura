@@ -10,6 +10,7 @@
   <hr />
   <h2>Tulokset</h2>
 
+  {% if results %}
   <ul>
     {% for result in results %}
     <li>
@@ -26,6 +27,8 @@
     Ei tapahtumia löytynyt.
   </p>
   {% endif %}
+  {% endif %}
+
   <p>
     <a href="/">Etusivulle</a>
   </p>

@@ -7,10 +7,10 @@
 
 <body>
   <p>
-  {% if session.user_id %}
-  <a href="/logout">Kirjaudu ulos</a>
-  {% else %}
-  <a href="/register">Rekisteröidy</a>
+    {% if session.user_id %}
+    <a href="/logout">Kirjaudu ulos</a>
+    {% else %}
+    <a href="/register">Rekisteröidy</a>
   <p>Kirjaudu sisään</p>
   <form action="/login" method="post">
     <p>
@@ -28,28 +28,34 @@
 
   <hr />
   <p>
-    <h2>{{ event.title }}</h2>
-    <strong>Päivämäärä</strong> {{ event.date }}
-    <p>Kuvaus: </p> {{ event.description }}
-    <p>
-        Pelajien määrä {{ event.num_players }}
-    </p>
-    <p>Ilmoittautuneet:</p>
-    <ul>
-      {% for registration in registrations %}
-      <li>{{ registration.username }}</li>
-      {% endfor %}
-    </ul>
+  <h2>{{ event.title }}</h2>
+  <strong>Päivämäärä</strong> {{ event.date }}
+  <p>Kuvaus: </p> {{ event.description }}
+  <p>
+    <strong>Peligenre:</strong>
+    {% if event.genre %}
+    {{ event.genre }}
+    {% endif %}
+  </p>
+  <p>
+    Pelajien määrä {{ event.num_players }}
+  </p>
+  <p>Ilmoittautuneet:</p>
+  <ul>
+    {% for registration in registrations %}
+    <li>{{ registration.username }}</li>
+    {% endfor %}
+  </ul>
   </p>
 
   {% if session.user_id%}
   <p>
-    <form action="/join/{{ event.id }}" method="post">
-      <input type="hidden" name="user_id" value="{{ session.user_id }}" />
-      <input type="hidden" name="event_id" value="{{ event.id }}" />
-      <input type="submit" value="Ilmoittaudu tapahtumaan" />
+  <form action="/join/{{ event.id }}" method="post">
+    <input type="hidden" name="user_id" value="{{ session.user_id }}" />
+    <input type="hidden" name="event_id" value="{{ event.id }}" />
+    <input type="submit" value="Ilmoittaudu tapahtumaan" />
 
-    </form>
+  </form>
   </p>
   {% endif %}
 
