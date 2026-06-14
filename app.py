@@ -1,3 +1,5 @@
+import re
+import secrets
 import sqlite3
 from flask import Flask
 from flask import redirect, render_template, request, session, abort, flash, make_response
@@ -10,13 +12,17 @@ import users
 app = Flask(__name__)
 app.secret_key = config.secret_key
 
+def check_csrf():
+    if "csrf_token" not in request.form:
+        abort(403)
+    if request.form["csrf_token"] != session["csrf_token"]:
+        abort(403)
 
 @app.route("/")
 def index():
     event_list = events.get_events()
     all_genres = events.get_all_genres()
     return render_template("index.html", events=event_list, all_genres=all_genres)
-
 
 @app.route("/register", methods=["GET", "POST"])
 def register():
@@ -54,6 +60,7 @@ def login():
     user_id = users.check_login(username, password)
     if user_id:
         session["user_id"] = user_id
+        session["csrf_token"] = secrets.token_hex(16)
         return redirect("/")
     else:
         flash("VIRHE: väärä tunnus tai salasana")
@@ -61,19 +68,38 @@ def login():
 
 @app.route("/logout")
 def logout():
-    del session["user_id"]
+    if "user_id" in session:
+        del session["user_id"]
+    if "csrf_token" in session:
+        del session["csrf_token"]
     return redirect("/")
 
 @app.route("/new_event", methods=["POST"])
 def new_event():
     require_login()
-    title = request.form["title"]
-    date = request.form["date"]
-    num_players = request.form["num_players"]
-    description = request.form["description"]
-    user_id = session["user_id"]
-    genre = request.form.get("genre")
+    check_csrf()
 
+    title = request.form["title"]
+    if not title or len(title) > 30:
+        abort(403)
+    date = request.form["date"]
+    if not date:
+        abort(403)
+    try:
+        num_players = int(request.form["num_players"])
+        if num_players < 1 or num_players > 100:
+            abort(403)
+    except ValueError:
+        abort(403)
+    description = request.form["description"]
+    if not description or len(description) > 200:
+        abort(403)
+    genre = request.form.get("genre")
+    all_genres = events.get_all_genres()
+    if not genre or genre not in all_genres:
+        abort(403)
+    
+    user_id = session["user_id"]
     event_id = events.add_event(title, date, num_players, description, user_id, genre)
     return redirect("/event/" + str(event_id))
 
@@ -87,29 +113,56 @@ def event_page(event_id):
 
 @app.route("/edit/<int:event_id>", methods=["GET", "POST"])
 def edit_event(event_id):
+    require_login()
     event = events.get_event(event_id)
+    if not event:
+        abort(404)
+    if event["user_id"] != session["user_id"]:
+        abort(403)
+
     if request.method == "GET":
         all_genres = events.get_all_genres()
         return render_template("edit.html", event=event, all_genres=all_genres, genre=event["genre"])
 
     if request.method == "POST":
+        check_csrf()
         title = request.form["title"]
+        if not title or len(title) > 30:
+            abort(403)
         date = request.form["date"]
-        num_players = request.form["num_players"]
+        if not date:
+            abort(403)
+        try:
+            num_players = int(request.form["num_players"])
+            if num_players < 1 or num_players > 100:
+                abort(403)
+        except ValueError:
+            abort(403)
         description = request.form["description"]
+        if not description or len(description) > 200:
+            abort(403)
         genre = request.form.get("genre")
+        all_genres = events.get_all_genres()
+        if not genre or genre not in all_genres:
+            abort(403)
 
         events.update_event(event["id"], title, date, num_players, description, genre)
         return redirect("/event/" + str(event_id))
 
 @app.route("/remove/<int:event_id>", methods=["GET", "POST"])
 def remove_event(event_id):
+    require_login()
     event = events.get_event(event_id)
+    if not event:
+        abort(404)
+    if event["user_id"] != session["user_id"]:
+        abort(403)
 
     if request.method == "GET":
         return render_template("remove.html", event=event)
 
     if request.method == "POST":
+        check_csrf()
         if "continue" in request.form:
             events.remove_event(event_id)
         return redirect("/")
@@ -125,9 +178,12 @@ def search_events():
 
 @app.route("/join/<int:event_id>", methods=["POST"])
 def join_event(event_id):
-    user_id = request.form["user_id"]
-    if not user_id:
-        abort(400)
+    require_login()
+    check_csrf()
+    event = events.get_event(event_id)
+    if not event:
+        abort(404)
+    user_id = session["user_id"]
     if events.join_event(user_id, event_id) is False:
         return "Olet jo ilmoittautunut "
     return redirect("/event/" + str(event_id))
@@ -153,8 +209,11 @@ def add_image():
         return render_template("add_image.html")
 
     if request.method == "POST":
+        check_csrf()
+        if "image" not in request.files:
+            abort(403)
         file = request.files["image"]
-        if not file.filename.endswith(".jpg"):
+        if not file or not file.filename.endswith(".jpg"):
             return "VIRHE: väärä tiedostomuoto"
 
         image = file.read()

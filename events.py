@@ -33,12 +33,11 @@ def remove_event(event_id):
     db.execute(sql, [event_id])
 
 def search_events(query):
-    sql = """SELECT DISTINCT e.id, e.title, e.date
+    sql = """SELECT e.id AS event_id, e.title, e.date, e.genre
              FROM events e
              WHERE e.title LIKE ? OR e.description LIKE ? OR e.genre LIKE ?
              ORDER BY e.date DESC"""
-    like = "%" + query + "%"
-    return db.query(sql, [like, like, like])
+    return db.query(sql, ["%" + query + "%", "%" + query + "%", "%" + query + "%"])
 
 def join_event(user_id, event_id):
     sql = """SELECT COUNT(*) FROM registrations WHERE user_id = ? AND event_id = ?"""

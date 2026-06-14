@@ -68,9 +68,10 @@
   <h2>Uusi tapahtuma</h2>
 
   <form action="/new_event" method="post">
+    <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}" />
     <p>
       Otsikko:<br />
-      <input type="text" name="title" required />
+      <input type="text" name="title" maxlength="30" required />
     </p>
     <p>
       Päivämäärä:<br />
@@ -78,11 +79,11 @@
     </p>
     <p>
       Pelaajien määrä:<br />
-      <input type="text" name="num_players" required />
+      <input type="number" name="num_players" min="1" max="100" required />
     </p>
     <p>
       Kuvaus:<br />
-      <textarea name="description" rows="5" cols="40" required></textarea>
+      <textarea name="description" rows="5" cols="40" maxlength="200" required></textarea>
     </p>
     <p>
       <label for="genre">Peligenre</label>: <br />

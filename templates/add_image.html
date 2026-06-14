@@ -5,6 +5,7 @@
 </head>
 <body>
     <form action="/add_image" method="post" enctype="multipart/form-data">
+        <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}" />
         <p>
             Kuva: <input type="file" name="image" accept=".jpg" />
         </p>
