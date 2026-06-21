@@ -1,36 +1,17 @@
-<!DOCTYPE html>
-<html>
+{% extends "layout.html" %}
 
-<head>
-  <title>Lautapeliseura</title>
-</head>
+{% block title %}Lautapeliseura{% endblock %}
 
-<body>
-  <p>
-    {% if session.user_id %}
-    <a href="/logout">Kirjaudu ulos</a>
-    {% else %}
-    <a href="/register">Rekisteröidy</a>
-  <p>Kirjaudu sisään</p>
-  <form action="/login" method="post">
-    <p>
-      Tunnus: <br />
-      <input type="text" name="username" />
-    </p>
-    <p>
-      Salasana: <br />
-      <input type="password" name="password" />
-    </p>
-    <input type="submit" value="Kirjaudu" />
-  </form>
-  {% endif %}
-  </p>
+{% block content %}
 
-  <hr />
-  <p>
+<hr />
+<div class="event">
   <h2>{{ event.title }}</h2>
   <strong>Päivämäärä</strong> {{ event.date }}
-  <p>Kuvaus: </p> {{ event.description }}
+  <p>Kuvaus: </p>
+  <div class="description">
+    {{ event.description }}
+  </div>
   <p>
     <strong>Peligenre:</strong>
     {% if event.genre %}
@@ -40,40 +21,40 @@
   <p>
     Pelaajien määrä {{ event.num_players }}
   </p>
-  <p>Ilmoittautuneet:</p>
-  <ul>
-    {% for registration in registrations %}
-    <li>{{ registration.username }}</li>
-    {% endfor %}
-  </ul>
-  </p>
+  <div class="registrations">
+    <p>Ilmoittautuneet:</p>
+    <ul>
+      {% for registration in registrations %}
+      <li>{{ registration.username }}</li>
+      {% endfor %}
+    </ul>
+  </div>
+</div>
 
-  {% if session.user_id %}
-  <p>
-    {% if is_registered %}
-    <form action="/leave/{{ event.id }}" method="post">
-      <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}" />
-      <input type="submit" value="Poistu tapahtumasta" />
-    </form>
-    {% else %}
-    <form action="/join/{{ event.id }}" method="post">
-      <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}" />
-      <input type="submit" value="Ilmoittaudu tapahtumaan" />
-    </form>
-    {% endif %}
-  </p>
-  {% endif %}
+{% if session.user_id %}
+<p>
+  {% if is_registered %}
+<form action="/leave/{{ event.id }}" method="post">
+  <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}" />
+  <input type="submit" value="Poistu tapahtumasta" />
+</form>
+{% else %}
+<form action="/join/{{ event.id }}" method="post">
+  <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}" />
+  <input type="submit" value="Ilmoittaudu tapahtumaan" />
+</form>
+{% endif %}
+</p>
+{% endif %}
 
-  {% if event.user_id == session.user_id %}
-  <p>
-    <a href="/edit/{{ event.id }}">Muokkaa</a> |
-    <a href="/remove/{{ event.id }}">Poista</a>
-  </p>
-  {% endif %}
+{% if event.user_id == session.user_id %}
+<p>
+  <a href="/edit/{{ event.id }}">Muokkaa</a> |
+  <a href="/remove/{{ event.id }}">Poista</a>
+</p>
+{% endif %}
 
-  <p>
-    <a href="/">Etusivulle</a>
-  </p>
-</body>
-
-</html>
+<p>
+  <a href="/">Etusivulle</a>
+</p>
+{% endblock %}

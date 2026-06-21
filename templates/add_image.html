@@ -1,9 +1,8 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Lisää profiilikuva</title>
-</head>
-<body>
+{% extends "layout.html" %}
+
+{% block title %}Lisää profiilikuva{% endblock %}
+
+{% block content %}
     <form action="/add_image" method="post" enctype="multipart/form-data">
         <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}" />
         <p>
@@ -14,5 +13,4 @@
     <p>
         <a href="/user/{{ session.user_id }}">Takaisin käyttäjäsivulle</a>
     </p>
-</body>
-</html>
+{% endblock %}

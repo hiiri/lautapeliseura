@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>{% block title %}{% endblock %}</title>
+    <link rel="stylesheet" href="/static/main.css">
+</head>
+
+<body>
+    <div class="header">
+        <h1>Lautapeliseura</h1>
+    </div>
+
+    <div class="nav">
+        {% if session.user_id %}
+        <a href="/logout">Kirjaudu ulos</a>
+        {% else %}
+            {% if request.path != '/register' %}
+            <a href="/register">Rekisteröidy</a>
+            <p>Kirjaudu sisään</p>
+            <form action="/login" method="post">
+                <p>
+                    Tunnus: <br />
+                    <input type="text" name="username" required />
+                </p>
+                <p>
+                    Salasana: <br />
+                    <input type="password" name="password" required />
+                </p>
+                <input type="submit" value="Kirjaudu" />
+            </form>
+            {% else %}
+            <a href="/">Etusivulle</a>
+            {% endif %}
+        {% endif %}
+        <hr />
+        {% if session.user_id %}
+        <p>
+            <a href="/user/{{ session.user_id }}">Käyttäjäsivu</a>
+        </p>
+        {% endif %}
+    </div>
+
+    <div class="content">
+        {% block content %}{% endblock %}
+    </div>
+</body>
+
+</html>

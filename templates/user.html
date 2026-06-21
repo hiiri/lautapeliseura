@@ -1,11 +1,8 @@
-<!DOCTYPE html>
-<html>
+{% extends "layout.html" %}
 
-<head>
-    <title>Käyttäjäsivu</title>
-</head>
+{% block title %}Käyttäjäsivu{% endblock %}
 
-<body>
+{% block content %}
     <h1>Käyttäjä {{ user.username }}</h1>
     {% if user.has_image %}
     <img src="/image/{{ user.id }}" />
@@ -41,6 +38,4 @@
     <p>
         <a href="/">Etusivulle</a>
     </p>
-</body>
-
-</html>
+{% endblock %}

@@ -1,11 +1,8 @@
-<!DOCTYPE html>
-<html>
+{% extends "layout.html" %}
 
-<head>
-  <title>Haku</title>
-</head>
+{% block title %}Haku{% endblock %}
 
-<body>
+{% block content %}
   {% if query %}
   <hr />
   <h2>Tulokset</h2>
@@ -18,7 +15,6 @@
         {{ result.title }}
       </a>
       {{ result.genre }}
-      <br />
       {{ result.date }}
     </li>
     {% endfor %}
@@ -33,6 +29,4 @@
   <p>
     <a href="/">Etusivulle</a>
   </p>
-</body>
-
-</html>
+{% endblock %}

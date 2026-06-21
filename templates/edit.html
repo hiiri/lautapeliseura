@@ -1,11 +1,9 @@
-<!DOCTYPE html>
-<html>
+{% extends "layout.html" %}
 
-<head>
-  <title>Muokkaa tapahtumaa</title>
-</head>
+{% block title %}Muokkaa tapahtumaa{% endblock %}
 
-<body>
+{% block content %}
+
   {% for message in get_flashed_messages() %}
   <p class="info">
     {{ message }}
@@ -46,6 +44,4 @@
   <p>
     <a href="/">Etusivulle</a>
   </p>
-</body>
-
-</html>
+{% endblock %}

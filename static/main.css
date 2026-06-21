@@ -1,0 +1,66 @@
+body {
+    margin: auto;
+    max-width: 50em;
+    font-family: sans-serif;
+    background-color: rgb(234, 228, 220);
+}
+
+.info {
+    border: 2px solid black;
+    margin: 1em;
+    padding: 0.5em;
+    background-color: blue;
+    color: white;
+}
+
+header {
+    background-color: black;
+    color: red;
+    padding: 1em;
+    margin: 0.5em 0;
+}
+
+.nav {
+    background-color: rgb(226, 219, 211);
+    padding: 0.5em;
+    margin: 0.5em 0;
+}
+
+.content {
+    background-color: rgb(240, 248, 248);
+    padding: 1em;
+    margin: 0.5em 0;
+}
+
+.event {
+    background-color: rgb(250, 255, 255);
+    padding: 1em;
+    margin: 0.5em 0;
+    border: 1px solid #555;
+    border-radius: 0.5em;
+}
+
+h1,
+h2 {
+    margin: 0;
+}
+
+a {
+    text-decoration: none;
+    color: #00f;
+    font-weight: bold;
+}
+
+.registrations {
+    background-color: rgb(250, 250, 250);
+    padding: 0.25em;
+    margin: 0.25em 0;
+    border: 1px solid #555;
+    border-radius: 0.25em;
+}
+
+.description {
+    background-color: rgb(250, 250, 250);
+    padding: 0.25em;
+    margin: 0.25em 0;
+}
