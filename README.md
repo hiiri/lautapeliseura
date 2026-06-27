@@ -6,7 +6,7 @@
 - Käyttäjä näkee sovellukseen lisätyt ilmoitukset.
 - Käyttäjä pystyy etsimään ilmoituksia sen perusteella, milloin tapahtuma on.
 - Käyttäjäsivu näyttää, montako ilmoitusta käyttäjä on lähettänyt ja listan ilmoituksista.
-- Käyttäjä pystyy valitsemaan ilmoitukselle yhden tai useamman luokittelun (esim. lautapelin genre, vaikeustaso).
+- Käyttäjä pystyy valitsemaan ilmoitukselle lautapelin genren.
 - Käyttäjä pystyy ilmoittautumaan tapahtumaan. Ilmoituksessa näytetään, ketkä käyttäjät ovat ilmoittautuneet.
 
 Tässä pääasiallinen tietokohde on tapahtuma ja toissijainen tietokohde on ilmoittautuminen.
